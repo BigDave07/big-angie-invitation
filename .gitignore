@@ -1,0 +1,6 @@
+.vercel
+.env*
+.claude
+.playwright-mcp
+inspiration
+.DS_Store
