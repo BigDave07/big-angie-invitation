@@ -268,12 +268,11 @@ body.at-invite .card.reveal{animation:unfold 1.6s cubic-bezier(.2,.8,.2,1) both}
 form{text-align:left;margin-top:26px;display:grid;gap:20px}
 label,.legend{font-family:var(--caps);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:8px}
 fieldset{border:0;padding:0;min-width:0}
-input[type=text],select,textarea{width:100%;font:inherit;font-size:1.15rem;color:var(--ink);background:transparent;border:0;border-bottom:1px solid rgba(110,79,71,.4);
+input[type=text],textarea{width:100%;font:inherit;font-size:1.15rem;color:var(--ink);background:transparent;border:0;border-bottom:1px solid rgba(110,79,71,.4);
   padding:8px 2px;border-radius:0;transition:border-color .3s}
 textarea{resize:vertical;min-height:84px;border:1px solid rgba(110,79,71,.3);border-radius:4px;padding:10px 12px;background:rgba(255,255,255,.35)}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--wine)}
+input:focus,textarea:focus{outline:none;border-color:var(--wine)}
 input::placeholder,textarea::placeholder{color:rgba(110,79,71,.5);font-style:italic}
-select{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236e4f47' stroke-width='1.4'/%3E%3C/svg%3E") right 4px center no-repeat}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .choice{margin:0;text-transform:none;letter-spacing:0;position:relative}
 .choice input{position:absolute;opacity:0}
@@ -283,7 +282,6 @@ select{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://w
 .choice input:checked + span{border-color:var(--wine);background:var(--wine);color:var(--cream);box-shadow:0 8px 20px -8px rgba(122,36,54,.6)}
 .choice input:checked + span small{color:rgba(251,245,234,.8)}
 .choice input:focus-visible + span{outline:2px solid var(--gold);outline-offset:3px}
-.party[hidden]{display:none}
 .submit{justify-self:center;margin-top:6px;color:var(--cream);background:var(--wine);border-color:var(--wine)}
 .submit:hover,.submit:focus-visible{background:#5e1524;transform:translateY(-2px)}
 .submit:disabled{opacity:.6;cursor:wait}
@@ -474,12 +472,6 @@ br.m{display:none}
             <label class="choice"><input type="radio" name="attending" value="No"><span>Regretfully declines<small>With deepest sorrow</small></span></label>
           </div>
         </fieldset>
-        <div class="party" id="party" hidden>
-          <label for="f-guests">Number in your party</label>
-          <select id="f-guests" name="guests">
-            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
-          </select>
-        </div>
         <div>
           <label for="f-msg">A note for Big Angie <span style="text-transform:none;letter-spacing:0;font-family:var(--serif);font-style:italic">(optional)</span></label>
           <textarea id="f-msg" name="message" maxlength="500" placeholder="Well wishes, dietary needs, or a little gossip…"></textarea>
@@ -671,15 +663,14 @@ lightbox.onclick = () => lightbox.close();
 showAttire('ladies');
 
 /* ---------- RSVP ---------- */
-const form = $('#rsvpForm'), party = $('#party'), err = $('#err'), btn = $('#submitBtn');
-form.addEventListener('change', e => { if (e.target.name === 'attending') party.hidden = e.target.value !== 'Yes'; });
+const form = $('#rsvpForm'), err = $('#err'), btn = $('#submitBtn');
 form.addEventListener('submit', async e => {
   e.preventDefault(); err.textContent = '';
   const fd = new FormData(form), name = (fd.get('name') || '').trim(), attending = fd.get('attending');
   if (!name) { err.textContent = 'Pray, do tell us your name.'; $('#f-name').focus(); return; }
   if (!attending) { err.textContent = 'Kindly let us know whether you shall attend.'; return; }
   if (!SHEET_URL) { err.textContent = 'RSVPs are not connected yet. Add the Google Sheet URL in index.html.'; return; }
-  fd.set('name', name); if (attending === 'No') fd.set('guests', '0');
+  fd.set('name', name);
   btn.disabled = true; btn.textContent = 'Sealing…';
   try {
     // ponytail: no-cors means we can't read Google's reply; a network failure still throws
